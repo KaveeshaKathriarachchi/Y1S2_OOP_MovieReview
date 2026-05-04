@@ -15,4 +15,14 @@ public class Payment {
         this.purchaseType = "Full Own";
         this.rentalDays = 1;
     }
+
+    // Parameterized constructor (legacy compatibility)
+    public Payment(String paymentId, String userId, Double amount, String status, String date) {
+        this(paymentId, userId, "Legacy Rental", amount, status, date, "Full Own", 1);
+    }
+
+    // Previous constructor (compatibility)
+    public Payment(String paymentId, String userId, String movieName, Double amount, String status, String date) {
+        this(paymentId, userId, movieName, amount, status, date, "Full Own", 1);
+    }
 }
