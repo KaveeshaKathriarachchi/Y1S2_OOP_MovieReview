@@ -55,4 +55,23 @@ public class Payment {
     public void setPurchaseType(String purchaseType) { this.purchaseType = purchaseType; }
     public Integer getRentalDays() { return rentalDays; }
     public void setRentalDays(Integer rentalDays) { this.rentalDays = rentalDays; }
+
+    // Helper method to convert Payment to CSV format
+    public String toCsv() {
+        return String.join(",", 
+            escapeCsv(paymentId), 
+            escapeCsv(userId), 
+            String.valueOf(amount), 
+            escapeCsv(status), 
+            escapeCsv(date),
+            escapeCsv(movieName),
+            escapeCsv(purchaseType),
+            String.valueOf(rentalDays)
+        );
+    }
+
+    private static String escapeCsv(String val) {
+        if (val == null) return "";
+        return val.replace(",", " ");
+    }
 }
