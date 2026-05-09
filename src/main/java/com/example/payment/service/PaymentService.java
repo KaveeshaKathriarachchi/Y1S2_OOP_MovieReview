@@ -17,7 +17,6 @@ public class PaymentService {
     private final Path filePath = Paths.get(FILE_NAME);
 
     public PaymentService() {
-        // Ensure the file exists on startup
         try {
             if (!Files.exists(filePath)) {
                 Files.createFile(filePath);
@@ -25,5 +24,25 @@ public class PaymentService {
         } catch (IOException e) {
             System.err.println("Error initializing payments.txt: " + e.getMessage());
         }
+    }
+
+    public synchronized List<Payment> getAllPayments() {
+        List<Payment> payments = new ArrayList<>();
+        if (!Files.exists(filePath)) {
+            return payments;
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Payment payment = Payment.fromCsv(line);
+                if (payment != null) {
+                    payments.add(payment);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading payments from file: " + e.getMessage());
+        }
+        return payments;
     }
 }
