@@ -68,4 +68,42 @@ public class PaymentService {
             System.err.println("Error writing payment to file: " + e.getMessage());
         }
     }
+
+    public synchronized boolean updateStatus(String paymentId, String newStatus) {
+        if (paymentId == null || paymentId.trim().isEmpty()) {
+            return false;
+        }
+        if (!"Success".equalsIgnoreCase(newStatus) && !"Failed".equalsIgnoreCase(newStatus)) {
+            return false;
+        }
+
+        List<Payment> payments = getAllPayments();
+        boolean found = false;
+
+        for (Payment payment : payments) {
+            if (payment.getPaymentId().equals(paymentId)) {
+                payment.setStatus("Success".equalsIgnoreCase(newStatus) ? "Success" : "Failed");
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            rewriteFile(payments);
+        }
+
+        return found;
+    }
+
+    private void rewriteFile(List<Payment> payments) {
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath, 
+                StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            for (Payment p : payments) {
+                writer.write(p.toCsv());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error rewriting payments file: " + e.getMessage());
+        }
+    }
 }
