@@ -17,6 +17,7 @@ public class PaymentService {
     private final Path filePath = Paths.get(FILE_NAME);
 
     public PaymentService() {
+        // Ensure the file exists on startup
         try {
             if (!Files.exists(filePath)) {
                 Files.createFile(filePath);
@@ -26,6 +27,10 @@ public class PaymentService {
         }
     }
 
+    /**
+     * Reads all payment records from the local payments.txt file.
+     * Handles exceptions gracefully and skips malformed rows.
+     */
     public synchronized List<Payment> getAllPayments() {
         List<Payment> payments = new ArrayList<>();
         if (!Files.exists(filePath)) {
@@ -46,11 +51,16 @@ public class PaymentService {
         return payments;
     }
 
+    /**
+     * Appends a new payment record to the file.
+     * Generates a UUID for the paymentId if not already present.
+     */
     public synchronized void savePayment(Payment payment) {
         if (payment.getPaymentId() == null || payment.getPaymentId().trim().isEmpty()) {
             payment.setPaymentId(UUID.randomUUID().toString());
         }
         
+        // Ensure file exists
         try {
             if (!Files.exists(filePath)) {
                 Files.createFile(filePath);
@@ -69,6 +79,10 @@ public class PaymentService {
         }
     }
 
+    /**
+     * Updates the status of a specific payment by ID to "Success" or "Failed".
+     * Rewrites the payments.txt file with the updated record.
+     */
     public synchronized boolean updateStatus(String paymentId, String newStatus) {
         if (paymentId == null || paymentId.trim().isEmpty()) {
             return false;
@@ -82,6 +96,7 @@ public class PaymentService {
 
         for (Payment payment : payments) {
             if (payment.getPaymentId().equals(paymentId)) {
+                // Normalize status capitalization to match expectations
                 payment.setStatus("Success".equalsIgnoreCase(newStatus) ? "Success" : "Failed");
                 found = true;
                 break;
@@ -95,6 +110,38 @@ public class PaymentService {
         return found;
     }
 
+    /**
+     * Deletes a payment by ID, but only if its status is "Failed".
+     * Rewrites the payments.txt file with the remaining records.
+     */
+    public synchronized boolean deleteFailedPayment(String paymentId) {
+        if (paymentId == null || paymentId.trim().isEmpty()) {
+            return false;
+        }
+
+        List<Payment> payments = getAllPayments();
+        Payment targetPayment = null;
+
+        for (Payment payment : payments) {
+            if (payment.getPaymentId().equals(paymentId)) {
+                targetPayment = payment;
+                break;
+            }
+        }
+
+        // Only allow deletion if the status is "Failed"
+        if (targetPayment != null && "Failed".equalsIgnoreCase(targetPayment.getStatus())) {
+            payments.remove(targetPayment);
+            rewriteFile(payments);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Helper method to overwrite payments.txt with the current list of payments.
+     */
     private void rewriteFile(List<Payment> payments) {
         try (BufferedWriter writer = Files.newBufferedWriter(filePath, 
                 StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
