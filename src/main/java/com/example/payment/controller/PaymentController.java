@@ -51,4 +51,48 @@ public class PaymentController {
         
         return "dashboard";
     }
+
+    @GetMapping("/payments/new")
+    public String viewAddPaymentForm(Model model) {
+        if (!model.containsAttribute("newPayment")) {
+            Payment defaultPayment = new Payment();
+            defaultPayment.setDate(LocalDate.now().toString());
+            defaultPayment.setStatus("Success");
+            model.addAttribute("newPayment", defaultPayment);
+        }
+        return "add-payment";
+    }
+
+    @PostMapping("/payments/create")
+    public String createPayment(@ModelAttribute("newPayment") Payment payment, 
+                                RedirectAttributes redirectAttributes) {
+        if (payment.getUserId() == null || payment.getUserId().trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User ID is required.");
+            redirectAttributes.addFlashAttribute("newPayment", payment);
+            return "redirect:/payments/new";
+        }
+        if (payment.getMovieName() == null || payment.getMovieName().trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Movie Name is required.");
+            redirectAttributes.addFlashAttribute("newPayment", payment);
+            return "redirect:/payments/new";
+        }
+
+        payment.setStatus("Success");
+        payment.setDate(LocalDate.now().toString());
+
+        if ("Rental".equalsIgnoreCase(payment.getPurchaseType())) {
+            if (payment.getRentalDays() == null || payment.getRentalDays() < 1) {
+                payment.setRentalDays(1);
+            }
+            payment.setAmount(1.99 * payment.getRentalDays());
+        } else {
+            payment.setPurchaseType("Full Own");
+            payment.setRentalDays(1);
+            payment.setAmount(9.99);
+        }
+
+        paymentService.savePayment(payment);
+        redirectAttributes.addFlashAttribute("successMessage", "Payment logged successfully.");
+        return "redirect:/payments/receipt/" + payment.getPaymentId();
+    }
 }
