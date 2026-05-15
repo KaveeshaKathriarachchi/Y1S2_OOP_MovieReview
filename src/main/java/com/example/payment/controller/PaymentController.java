@@ -95,4 +95,28 @@ public class PaymentController {
         redirectAttributes.addFlashAttribute("successMessage", "Payment logged successfully.");
         return "redirect:/payments/receipt/" + payment.getPaymentId();
     }
+
+    @GetMapping("/payments/list")
+    public String viewLedgerList(Model model) {
+        List<Payment> payments = paymentService.getAllPayments();
+        model.addAttribute("payments", payments);
+        return "payment-list";
+    }
+
+    @GetMapping("/payments/receipt/{id}")
+    public String viewReceipt(@PathVariable("id") String paymentId, Model model) {
+        List<Payment> payments = paymentService.getAllPayments();
+        Payment target = payments.stream()
+                .filter(p -> p.getPaymentId().equals(paymentId))
+                .findFirst()
+                .orElse(null);
+
+        if (target == null) {
+            model.addAttribute("errorMessage", "Transaction record not found.");
+            return "redirect:/payments/list";
+        }
+
+        model.addAttribute("payment", target);
+        return "receipt";
+    }
 }
