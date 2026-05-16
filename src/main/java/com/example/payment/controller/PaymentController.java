@@ -22,6 +22,10 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    /**
+     * UI 1: Dashboard Overview
+     * Renders stats, health meter, and the last 5 recent transactions.
+     */
     @GetMapping({"/", "/payments/dashboard"})
     public String viewDashboard(Model model) {
         List<Payment> payments = paymentService.getAllPayments();
@@ -36,6 +40,7 @@ public class PaymentController {
                 .mapToDouble(Payment::getAmount)
                 .sum();
 
+        // Extract last 5 activities, reversed so the newest are on top
         List<Payment> recentPayments = new ArrayList<>();
         int startIdx = payments.size() - 1;
         int endIdx = Math.max(0, payments.size() - 5);
@@ -52,6 +57,10 @@ public class PaymentController {
         return "dashboard";
     }
 
+    /**
+     * UI 2: Add Payment Form Page
+     * Renders a blank payment log form with default values.
+     */
     @GetMapping("/payments/new")
     public String viewAddPaymentForm(Model model) {
         if (!model.containsAttribute("newPayment")) {
@@ -63,9 +72,25 @@ public class PaymentController {
         return "add-payment";
     }
 
+    /**
+     * UI 3: Transaction Ledger Log Page
+     * Renders a full registry of all transaction lines in the file.
+     */
+    @GetMapping("/payments/list")
+    public String viewLedgerList(Model model) {
+        List<Payment> payments = paymentService.getAllPayments();
+        model.addAttribute("payments", payments);
+        return "payment-list";
+    }
+
+    /**
+     * Submit Handler: Save manual payment log.
+     * Redirects to the transaction list on completion.
+     */
     @PostMapping("/payments/create")
     public String createPayment(@ModelAttribute("newPayment") Payment payment, 
                                 RedirectAttributes redirectAttributes) {
+        // Backend Validation
         if (payment.getUserId() == null || payment.getUserId().trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "User ID is required.");
             redirectAttributes.addFlashAttribute("newPayment", payment);
@@ -77,9 +102,11 @@ public class PaymentController {
             return "redirect:/payments/new";
         }
 
+        // Set defaults automatically
         payment.setStatus("Success");
         payment.setDate(LocalDate.now().toString());
 
+        // Calculate amount based on purchase option
         if ("Rental".equalsIgnoreCase(payment.getPurchaseType())) {
             if (payment.getRentalDays() == null || payment.getRentalDays() < 1) {
                 payment.setRentalDays(1);
@@ -96,13 +123,10 @@ public class PaymentController {
         return "redirect:/payments/receipt/" + payment.getPaymentId();
     }
 
-    @GetMapping("/payments/list")
-    public String viewLedgerList(Model model) {
-        List<Payment> payments = paymentService.getAllPayments();
-        model.addAttribute("payments", payments);
-        return "payment-list";
-    }
-
+    /**
+     * UI 4: Printable Receipt Page
+     * Renders a cinema ticket receipt with a QR code.
+     */
     @GetMapping("/payments/receipt/{id}")
     public String viewReceipt(@PathVariable("id") String paymentId, Model model) {
         List<Payment> payments = paymentService.getAllPayments();
@@ -118,5 +142,51 @@ public class PaymentController {
 
         model.addAttribute("payment", target);
         return "receipt";
+    }
+
+    /**
+     * Toggle Status Handler: Change payment status.
+     * Redirects back to the transaction ledger view.
+     */
+    @PostMapping("/payments/toggle/{id}")
+    public String togglePaymentStatus(@PathVariable("id") String paymentId, 
+                                      RedirectAttributes redirectAttributes) {
+        List<Payment> payments = paymentService.getAllPayments();
+        Payment target = payments.stream()
+                .filter(p -> p.getPaymentId().equals(paymentId))
+                .findFirst()
+                .orElse(null);
+
+        if (target == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Transaction record not found.");
+            return "redirect:/payments/list";
+        }
+
+        String newStatus = "Success".equalsIgnoreCase(target.getStatus()) ? "Failed" : "Success";
+        boolean updated = paymentService.updateStatus(paymentId, newStatus);
+        
+        if (updated) {
+            redirectAttributes.addFlashAttribute("successMessage", "Status for transaction " + paymentId + " updated to " + newStatus + ".");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update transaction status.");
+        }
+        
+        return "redirect:/payments/list";
+    }
+
+    /**
+     * Delete failed transactions handler.
+     * Redirects back to the transaction ledger view.
+     */
+    @PostMapping("/payments/delete/{id}")
+    public String deletePayment(@PathVariable("id") String paymentId, 
+                                RedirectAttributes redirectAttributes) {
+        boolean deleted = paymentService.deleteFailedPayment(paymentId);
+        if (deleted) {
+            redirectAttributes.addFlashAttribute("successMessage", "Failed transaction " + paymentId + " was permanently removed.");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Unable to remove transaction. It must have a status of 'Failed'.");
+        }
+        return "redirect:/payments/list";
     }
 }
