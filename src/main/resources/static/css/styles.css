@@ -1,0 +1,63 @@
+/* CSS Stylesheet - Payment Section Theme (Premium Cinematic Dark-Gold style) */
+
+/* Global Settings & Variables */
+:root {
+    --bg-color: #050508;
+    --card-bg: #121212;
+    --input-bg: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --text-muted: #777777;
+    
+    --brand-gold: #f5c518;
+    --brand-gold-hover: #ffd83b;
+    --brand-gold-glow: rgba(245, 197, 24, 0.25);
+    
+    --brand-red: #e50914;
+    --brand-red-hover: #b81d24;
+    --brand-red-glow: rgba(229, 9, 20, 0.4);
+    
+    --success-green: #46d369;
+    --success-bg: rgba(70, 211, 105, 0.15);
+    
+    --danger-red: #e50914;
+    --danger-bg: rgba(229, 9, 20, 0.15);
+    
+    --nav-height: 68px;
+    --border-radius: 12px;
+    --card-border-radius: 20px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(circle at 50% 0%, #151525 0%, #08080a 60%, #030305 100%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 3rem;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #08080a;
+}
+::-webkit-scrollbar-thumb {
+    background: #222222;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #333333;
+}
