@@ -61,3 +61,139 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #333333;
 }
+
+/* Unified Navigation Bar (Made Sleek & Minimal to Blend In) */
+.navbar {
+    height: var(--nav-height);
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.brand-title {
+    color: var(--brand-gold);
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-shadow: 0 0 10px rgba(245, 197, 24, 0.3);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    color: var(--text-primary);
+}
+
+.nav-links li.active a {
+    color: var(--text-primary);
+    font-weight: 700;
+    border-bottom: 2px solid var(--brand-gold);
+    padding-bottom: 4px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.btn-signout {
+    background-color: #222222;
+    color: var(--text-primary);
+    border: 1px solid #333333;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.btn-signout:hover {
+    background-color: var(--brand-red);
+    border-color: var(--brand-red);
+}
+
+.avatar-profile {
+    width: 32px;
+    height: 32px;
+    background-color: #f5c518;
+    color: #000000;
+    font-size: 0.9rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    text-transform: uppercase;
+}
+
+/* Page Containers (Centered Charcoal Rounded Container matching screenshot) */
+.page-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 3rem;
+    background-color: var(--card-bg);
+    border-radius: var(--card-border-radius);
+    border: 1px solid #222222;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Alerts and Notifications */
+.alerts-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.alert-success {
+    background-color: var(--success-bg);
+    border-left: 4px solid var(--success-green);
+    color: var(--success-green);
+}
+
+.alert-danger {
+    background-color: var(--danger-bg);
+    border-left: 4px solid var(--brand-red);
+    color: var(--brand-red);
+}
