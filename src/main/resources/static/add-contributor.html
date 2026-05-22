@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Contributor</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: "Poppins", Arial, sans-serif;
+
+            background:
+                linear-gradient(rgba(0,0,0,0.75),
+                rgba(0,0,0,0.9)),
+                url("/images/bg.jpg");
+
+            background-size: cover;
+            background-position: center;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: rgba(20,20,20,0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+            margin: 30px 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #f5c518;
+            margin-bottom: 35px;
+            font-size: 38px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #f5c518;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.08);
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 18px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #actionBtn {
+            background: linear-gradient(135deg,#f5c518,#ffd84d);
+            color: black;
+        }
+
+        .logout-btn {
+            background: crimson;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            color: #f5c518;
+            font-weight: 600;
+        }
+
+        img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 18px;
+            margin-top: 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+        }
+    </style>
+
+</head>
+
+<body>
+
+<script>
+
+    /* ================================================= */
+    /* ADMIN CHECK */
+    /* ================================================= */
+
+    if (localStorage.getItem("role") !== "ADMIN") {
+
+        alert("Admins only");
+
+        window.location.href = "User_input.html";
+    }
+
+</script>
+
+<div class="container">
+
+    <h1 id="title">Add Contributor</h1>
+
+    <!-- FORM FIELDS -->
+
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text"
+               id="name"
+               placeholder="Leonardo DiCaprio">
+    </div>
+
+    <div class="form-group">
+        <label>Role</label>
+
+        <select id="role">
+
+            <option value="">Select Role</option>
+
+            <option value="Actor">Actor</option>
+            <option value="Director">Director</option>
+            <option value="Producer">Producer</option>
+            <option value="Writer">Writer</option>
+
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Date of Birth</label>
+
+        <input type="date"
+               id="dateOfBirth">
+    </div>
+
+    <div class="form-group">
+        <label>Country</label>
+
+        <input type="text"
+               id="country"
+               placeholder="USA">
+    </div>
+
+    <!-- PHOTO -->
+
+    <div class="form-group">
+
+        <label>Contributor Photo</label>
+
+        <input type="file"
+               id="photoFile"
+               accept="image/*">
+
+        <img id="preview"
+             src="/images/default-banner.jpg">
+
+    </div>
+
+    <div class="form-group">
+        <label>Description</label>
+
+        <textarea id="description"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Awards</label>
+
+        <input type="text"
+               id="awards">
+    </div>
+
+    <div class="form-group">
+        <label>Notable Works</label>
+
+        <input type="text"
+               id="notableWorks">
+    </div>
+
+    <!-- BUTTONS -->
+
+    <div class="button-group">
+
+        <button id="actionBtn"
+                onclick="handleSubmit()">
+
+            Add Contributor
+
+        </button>
+
+        <button class="logout-btn"
+                onclick="logout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+    <div id="result"></div>
+
+    <!-- NAVIGATION -->
+
+    <div class="nav-buttons"
+         id="navButtons">
+
+        <button onclick="goBack()">
+            ⬅ Back
+        </button>
+
+        <button onclick="goNext()">
+            Next ➡
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+    /* ================================================= */
+    /* NAVIGATION */
+    /* ================================================= */
+
+    function goBack() {
+
+        window.location.href =
+            "User_input.html";
+    }
+
+    function goNext() {
+
+        window.location.href =
+            "add-movie.html";
+    }
+
+    /* ================================================= */
+    /* EDIT MODE */
+    /* ================================================= */
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const editId =
+        params.get("id");
+
+    const isEditMode =
+        editId !== null;
+
+    if (isEditMode) {
+
+        document
+        .getElementById("navButtons")
+        .style.display = "none";
+
+        document
+        .getElementById("title")
+        .innerText = "Edit Contributor";
+
+        document
+        .getElementById("actionBtn")
+        .innerText = "Update Contributor";
+    }
+
+    /* ================================================= */
+    /* IMAGE HANDLING */
+    /* ================================================= */
+
+    let photoBase64 = "";
+
+    document
+    .getElementById("photoFile")
+
+    .addEventListener(
+        "change",
+
+        function(e) {
+
+            const file =
+                e.target.files[0];
+
+            if (!file) return;
+
+            const reader =
+                new FileReader();
+
+            reader.onload =
+                function(event) {
+
+                    photoBase64 =
+                        event.target.result;
+
+                    document
+                    .getElementById("preview")
+                    .src = photoBase64;
+                };
+
+            reader.readAsDataURL(file);
+        }
+    );
+
+    /* ================================================= */
+    /* LOAD CONTRIBUTOR */
+    /* ================================================= */
+
+    function loadContributor() {
+
+        if (!isEditMode) return;
+
+        fetch("/contributors/all")
+
+            .then(res => res.json())
+
+            .then(data => {
+
+                const c =
+                    data.find(x => x.id === editId);
+
+                if (!c) return;
+
+                document.getElementById("name").value =
+                    c.name || "";
+
+                document.getElementById("role").value =
+                    c.role || "";
+
+                document.getElementById("dateOfBirth").value =
+                    c.dateOfBirth || "";
+
+                document.getElementById("country").value =
+                    c.country || "";
+
+                photoBase64 =
+                    c.photo || "";
+
+                document.getElementById("preview").src =
+                    c.photo || "/images/default-banner.jpg";
+
+                document.getElementById("description").value =
+                    c.description || "";
+
+                document.getElementById("awards").value =
+                    c.awards || "";
+
+                document.getElementById("notableWorks").value =
+                    c.notableWorks || "";
+            });
+    }
+
+    loadContributor();
+
+    /* ================================================= */
+    /* SUBMIT */
+    /* ================================================= */
+
+    function handleSubmit() {
+
+        const contributor = {
+
+            name:
+                document.getElementById("name").value.trim(),
+
+            role:
+                document.getElementById("role").value.trim(),
+
+            dateOfBirth:
+                document.getElementById("dateOfBirth").value,
+
+            country:
+                document.getElementById("country").value.trim(),
+
+            photo:
+                photoBase64,
+
+            description:
+                document.getElementById("description").value.trim(),
+
+            awards:
+                document.getElementById("awards").value.trim(),
+
+            notableWorks:
+                document.getElementById("notableWorks").value.trim()
+        };
+
+        if (
+            !contributor.name ||
+            !contributor.role ||
+            !contributor.dateOfBirth ||
+            !contributor.country
+        ) {
+
+            document.getElementById("result").innerText =
+                "Please fill all required fields";
+
+            return;
+        }
+
+        if (isEditMode) {
+
+            fetch(`/contributors/update/${editId}`, {
+
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(contributor)
+
+            })
+
+            .then(res => res.text())
+
+            .then(msg => {
+
+                alert(msg);
+
+                window.location.href =
+                    "contributors.html";
+            });
+
+        } else {
+
+            fetch("/contributors/add", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(contributor)
+
+            })
+
+            .then(res => res.text())
+
+            .then(msg => {
+
+                document.getElementById("result").innerText =
+                    msg;
+
+                document.getElementById("name").value = "";
+                document.getElementById("role").value = "";
+                document.getElementById("dateOfBirth").value = "";
+                document.getElementById("country").value = "";
+                document.getElementById("description").value = "";
+                document.getElementById("awards").value = "";
+                document.getElementById("notableWorks").value = "";
+
+                photoBase64 = "";
+
+                document.getElementById("preview").src =
+                    "/images/default-banner.jpg";
+
+                document.getElementById("photoFile").value = "";
+            });
+        }
+    }
+
+    /* ================================================= */
+    /* LOGOUT */
+    /* ================================================= */
+
+    function logout() {
+
+        localStorage.clear();
+
+        window.location.href =
+            "User_input.html";
+    }
+
+</script>
+
+</body>
+</html>

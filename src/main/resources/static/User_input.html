@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Login</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+
+    /* ================================================= */
+    /* BODY */
+    /* ================================================= */
+
+    body {
+
+        margin: 0;
+
+        padding: 0;
+
+        min-height: 100vh;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        font-family: "Poppins", Arial, sans-serif;
+
+        background:
+            linear-gradient(
+                rgba(0,0,0,0.72),
+                rgba(0,0,0,0.88)
+            ),
+
+            url("images/bg.jpg");
+
+        background-size: cover;
+
+        background-position: center;
+
+        overflow: hidden;
+
+        position: relative;
+    }
+
+    /* ================================================= */
+    /* BACKGROUND GLOW */
+    /* ================================================= */
+
+    body::before {
+
+        content: "";
+
+        position: absolute;
+
+        width: 500px;
+        height: 500px;
+
+        background:
+            radial-gradient(
+                rgba(245,197,24,0.18),
+                transparent 70%
+            );
+
+        top: -120px;
+        right: -120px;
+
+        filter: blur(20px);
+
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    body::after {
+
+        content: "";
+
+        position: absolute;
+
+        width: 400px;
+        height: 400px;
+
+        background:
+            radial-gradient(
+                rgba(255,255,255,0.08),
+                transparent 70%
+            );
+
+        bottom: -120px;
+        left: -120px;
+
+        filter: blur(20px);
+
+        animation: floatGlow 10s ease-in-out infinite;
+    }
+
+    @keyframes floatGlow {
+
+        0% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    /* ================================================= */
+    /* LOGIN BOX */
+    /* ================================================= */
+
+    .login-box {
+
+        width: 100%;
+
+        max-width: 420px;
+
+        background: rgba(15,15,15,0.78);
+
+        backdrop-filter: blur(18px);
+
+        border: 1px solid rgba(255,255,255,0.08);
+
+        border-radius: 28px;
+
+        padding: 50px 45px;
+
+        box-shadow:
+            0 15px 45px rgba(0,0,0,0.75);
+
+        text-align: center;
+
+        animation: fadeIn 0.9s ease;
+
+        position: relative;
+
+        z-index: 5;
+    }
+
+    /* ================================================= */
+    /* ANIMATION */
+    /* ================================================= */
+
+    @keyframes fadeIn {
+
+        from {
+
+            opacity: 0;
+
+            transform: translateY(35px) scale(0.98);
+        }
+
+        to {
+
+            opacity: 1;
+
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* ================================================= */
+    /* TITLE */
+    /* ================================================= */
+
+    h1 {
+
+        color: #f5c518;
+
+        margin-bottom: 12px;
+
+        font-size: 40px;
+
+        letter-spacing: 1px;
+    }
+
+    p {
+
+        color: #cccccc;
+
+        margin-bottom: 35px;
+
+        font-size: 15px;
+
+        line-height: 1.6;
+    }
+
+    /* ================================================= */
+    /* FORM GROUP */
+    /* ================================================= */
+
+    .form-group {
+
+        margin-bottom: 22px;
+    }
+
+    /* ================================================= */
+    /* INPUTS */
+    /* ================================================= */
+
+    input {
+
+        width: 100%;
+
+        padding: 16px 18px;
+
+        border: 1px solid transparent;
+
+        border-radius: 18px;
+
+        background: rgba(255,255,255,0.07);
+
+        color: white;
+
+        font-size: 15px;
+
+        box-sizing: border-box;
+
+        transition:
+            0.35s ease,
+            transform 0.25s ease;
+    }
+
+    input::placeholder {
+
+        color: #aaaaaa;
+    }
+
+    input:focus {
+
+        outline: none;
+
+        transform: translateY(-1px);
+
+        background: rgba(255,255,255,0.12);
+
+        border: 1px solid rgba(245,197,24,0.5);
+
+        box-shadow:
+            0 0 15px rgba(245,197,24,0.35);
+    }
+
+    /* ================================================= */
+    /* BUTTON */
+    /* ================================================= */
+
+    button {
+
+        width: 100%;
+
+        padding: 16px;
+
+        border: none;
+
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f5c518,
+                #ffd84d
+            );
+
+        color: black;
+
+        font-size: 16px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            opacity 0.25s ease;
+    }
+
+    button:hover {
+
+        transform: translateY(-3px);
+
+        box-shadow:
+            0 10px 25px rgba(245,197,24,0.35);
+    }
+
+    button:active {
+
+        transform: scale(0.98);
+    }
+
+    /* ================================================= */
+    /* RESULT */
+    /* ================================================= */
+
+    #result {
+
+        margin-top: 20px;
+
+        font-weight: bold;
+
+        color: white;
+
+        min-height: 20px;
+
+        transition: 0.3s ease;
+    }
+
+    /* ================================================= */
+    /* RESPONSIVE */
+    /* ================================================= */
+
+    @media (max-width: 500px) {
+
+        .login-box {
+
+            margin: 20px;
+
+            padding: 35px 28px;
+        }
+
+        h1 {
+
+            font-size: 32px;
+        }
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+  <h1>🎬 Welcome Back</h1>
+
+  <p>Login to continue</p>
+
+  <!-- USERNAME -->
+  <div class="form-group">
+
+    <input
+            type="text"
+            id="username"
+            placeholder="Enter Username"
+    >
+
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="form-group">
+
+    <input
+            type="password"
+            id="password"
+            placeholder="Enter Password"
+    >
+
+  </div>
+
+  <!-- BUTTON -->
+  <button onclick="login()">
+    Login
+  </button>
+
+  <!-- RESULT -->
+  <div id="result"></div>
+
+</div>
+
+<script>
+
+  function login() {
+
+      const username =
+          document.getElementById("username")
+          .value
+          .trim();
+
+      const password =
+          document.getElementById("password")
+          .value
+          .trim();
+
+      const result =
+          document.getElementById("result");
+
+      result.innerText = "";
+
+      // VALIDATION
+      if (!username || !password) {
+
+          result.innerText =
+              "Please fill all fields";
+
+          return;
+      }
+
+      fetch(
+          `/login?username=${
+              encodeURIComponent(username)
+          }&password=${
+              encodeURIComponent(password)
+          }`
+      )
+
+      .then(res => res.text())
+
+      .then(data => {
+
+          // ADMIN LOGIN
+          if (
+              data.toLowerCase()
+              .includes("admin")
+          ) {
+
+              localStorage.setItem(
+                  "role",
+                  "ADMIN"
+              );
+
+              result.innerText =
+                  "Login successful ✅";
+
+              setTimeout(() => {
+
+                  window.location.href =
+                      "add-contributor.html";
+
+              }, 700);
+          }
+
+          // USER LOGIN
+          else if (
+              data.toLowerCase()
+              .includes("user")
+          ) {
+
+              localStorage.setItem(
+                  "role",
+                  "USER"
+              );
+
+              result.innerText =
+                  "Login successful ✅";
+
+              setTimeout(() => {
+
+                  window.location.href =
+                      "view-movie-cast.html";
+
+              }, 700);
+          }
+
+          // INVALID LOGIN
+          else {
+
+              result.innerText =
+                  "Invalid login ❌";
+          }
+      })
+
+      .catch(() => {
+
+          result.innerText =
+              "Error. Try again.";
+      });
+  }
+
+</script>
+
+</body>
+
+</html>

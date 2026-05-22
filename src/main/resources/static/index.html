@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStream - Unlimited Movies & TV Shows</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ================================================= */
+        /* PREMIUM CINEMA LANDING THEME                      */
+        /* ================================================= */
+        :root {
+            --brand-primary: #f5c518;      /* Signature Cinema Accent Yellow */
+            --brand-danger: #e50914;       /* High-Impact Cinematic Red */
+            --bg-overlay: rgba(0, 0, 0, 0.78);
+            --surface-card: rgba(18, 18, 18, 0.85);
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .hero-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background:
+                linear-gradient(var(--bg-overlay), var(--bg-overlay)),
+                url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925&auto=format&fit=cover');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        /* ================================================= */
+        /* NAVIGATION BAR                                    */
+        /* ================================================= */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 5%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .brand-logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--brand-primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            cursor: pointer;
+        }
+
+        .brand-logo span {
+            color: #ffffff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* ================================================= */
+        /* BUTTON DESIGN SYSTEM                              */
+        /* ================================================= */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-signin {
+            background-color: var(--brand-danger);
+            color: #ffffff;
+        }
+
+        .btn-signin:hover {
+            background-color: #ff1a26;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+        }
+
+        /* New button styling for contributors desk access */
+        .btn-contributor-nav {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-contributor-nav:hover {
+            background-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+            color: var(--brand-primary);
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, var(--brand-primary), #ffd84d);
+            color: #000000;
+            font-size: 1.1rem;
+            padding: 16px 40px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+        }
+
+        .btn-signup:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 197, 24, 0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ================================================= */
+        /* HERO MIDDLE PANEL                                 */
+        /* ================================================= */
+        .hero-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: 80px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.15;
+            max-width: 950px;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            max-width: 800px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .hero-tagline {
+            font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+            color: var(--brand-primary);
+            font-weight: 600;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ================================================= */
+        /* COMPLEMENTARY FEATURES DISPLAY GRID              */
+        /* ================================================= */
+        .features-section {
+            background-color: #000000;
+            padding: 60px 5%;
+            border-top: 8px solid #222222;
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: var(--surface-card);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.03);
+            transition: var(--transition-smooth);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(245, 197, 24, 0.2);
+        }
+
+        .feature-card h3 {
+            color: var(--brand-primary);
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: #cccccc;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ================================================= */
+        /* RESPONSIVE DESIGN ADJUSTMENTS                    */
+        /* ================================================= */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 20px 4%;
+            }
+            .brand-logo {
+                font-size: 1.7rem;
+            }
+            .nav-actions {
+                gap: 8px;
+            }
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+            .btn-signup {
+                padding: 14px 30px;
+                font-size: 1rem;
+                width: 100%;
+            }
+            .hero-content {
+                margin-top: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero-wrapper">
+
+    <nav class="navbar" aria-label="Main Page Security Navigation">
+        <div class="brand-logo" onclick="window.location.reload()">Cine<span>Stream</span></div>
+        <div class="nav-actions">
+            <a href="User_input.html" class="btn btn-contributor-nav" aria-label="Navigate to administrative contributor desk panel">🎭 Add Contributors</a>
+            <a href="User_input.html" class="btn btn-signin" aria-label="Sign in to your existing account profile">Sign In</a>
+        </div>
+    </nav>
+
+    <main class="hero-content">
+        <h1 class="hero-title">Unlimited movies, TV shows, and more</h1>
+        <p class="hero-subtitle">Starts at USD 2.99. Cancel anytime.</p>
+        <p class="hero-tagline">Ready to explore? Create your premium account profile today.</p>
+
+        <a href="User_input.html" class="btn btn-signup" aria-label="Sign up and create a new membership portal account">Get Started ➔</a>
+    </main>
+
+</div>
+
+<section class="features-section" aria-label="Platform Utility Offerings">
+    <div class="features-grid">
+        <article class="feature-card">
+            <h3>Enjoy on your TV</h3>
+            <p>Watch on Smart TVs, Playstation, Xbox, Chromecast, Apple TV, Blu-ray players, and more dynamically.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Watch Everywhere</h3>
+            <p>Stream unlimited cinematic pieces on your phone, tablet, laptop, and home media installations without extra fees.</p>
+        </article>
+        <article class="feature-card">
+            <h3>Interactive Trailers</h3>
+            <p>Review high-definition previews, cross-reference categorical genre listings, and manage standalone watchlists instantly.</p>
+        </article>
+    </div>
+</section>
+
+</body>
+</html>
