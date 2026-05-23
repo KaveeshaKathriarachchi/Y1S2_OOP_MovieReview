@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | CineRent</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="index.html">CineRent</a>
+        <nav class="nav-actions">
+            <a class="ghost-button" href="signup.html">Sign Up</a>
+        </nav>
+    </header>
+
+    <main class="form-page">
+        <section class="form-panel">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <label>User ID<input name="userId" required></label>
+                <label>Password<input name="password" type="password" required></label>
+                <button class="primary-button full" type="submit">Enter Platform</button>
+            </form>
+            <p id="loginMessage" class="message"></p>
+        </section>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

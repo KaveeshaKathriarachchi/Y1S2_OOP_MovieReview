@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies | CineRent</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="index.html">CineRent</a>
+        <nav class="nav-actions">
+            <button id="profileButton" class="avatar-button" type="button">P</button>
+            <button id="logoutButton" class="ghost-button" type="button">Logout</button>
+        </nav>
+    </header>
+
+    <aside id="profilePanel" class="profile-panel hidden">
+        <h2>Profile</h2>
+        <div id="profileDetails"></div>
+        <form id="profileForm" class="compact-form">
+            <label>Name<input name="name" required></label>
+            <label>Email<input name="email" type="email" required></label>
+            <label>New Password<input name="password" type="password"></label>
+            <button class="secondary-button full" type="submit">Edit Profile</button>
+        </form>
+        <a id="profilePayButton" class="primary-button full hidden" href="payment.html">Become Paid User</a>
+    </aside>
+
+    <main class="movie-page showcase-container">
+        <section class="section-heading">
+            <h1>Movie Library</h1>
+            <p id="accessNote" class="muted"></p>
+        </section>
+
+        <section class="analytics-bar" aria-label="Platform analytics">
+            <div class="stat-block">
+                <div id="statMovies" class="stat-metric">0</div>
+                <div class="stat-label">Movies</div>
+            </div>
+            <div class="stat-block">
+                <div id="statReviews" class="stat-metric">0</div>
+                <div class="stat-label">Visible Reviews</div>
+            </div>
+            <div class="stat-block">
+                <div id="statGenres" class="stat-metric">0</div>
+                <div class="stat-label">Genres</div>
+            </div>
+            <div class="stat-block">
+                <div id="statAccess" class="stat-metric">Free</div>
+                <div class="stat-label">Access Level</div>
+            </div>
+        </section>
+
+        <section class="control-deck" aria-label="Movie controls">
+            <div class="search-field-wrapper">
+                <label class="sr-only" for="movieSearch">Search movies</label>
+                <input id="movieSearch" type="search" placeholder="Search by title, genre, or release date">
+            </div>
+            <div class="action-buttons">
+                <button id="themeButton" class="btn-secondary" type="button">Toggle Theme</button>
+                <a class="btn-secondary" href="contributors.html">Contributors</a>
+                <a id="paidShortcut" class="btn-primary" href="payment.html">Become Paid</a>
+            </div>
+        </section>
+
+        <section id="genreFilters" class="genre-filter-tray" aria-label="Genre filters"></section>
+        <section id="movieList" class="gallery-grid"></section>
+    </main>
+
+    <template id="movieCardTemplate">
+        <article class="movie-card">
+            <div class="poster-container">
+                <img class="poster-image" alt="">
+                <div class="rating-badge"></div>
+                <button class="watchlist-trigger" type="button" aria-label="Add to watchlist">+</button>
+            </div>
+            <div class="card-body">
+                <h2 class="card-title"></h2>
+                <p class="card-subtext release"></p>
+                <div class="card-chips"></div>
+                <div class="button-row">
+                    <button class="btn-secondary trailer" type="button">Trailer</button>
+                    <button class="btn-stream watch" type="button">Load Movie</button>
+                </div>
+                <div class="review-box">
+                    <h3>Reviews</h3>
+                    <div class="reviews"></div>
+                    <form class="review-form hidden">
+                        <select name="rating">
+                            <option value="5">5 stars</option>
+                            <option value="4">4 stars</option>
+                            <option value="3">3 stars</option>
+                            <option value="2">2 stars</option>
+                            <option value="1">1 star</option>
+                        </select>
+                        <textarea name="reviewComment" placeholder="Write your review"></textarea>
+                        <button class="secondary-button" type="submit">Add Review</button>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </template>
+
+    <section id="theaterModal" class="theater-modal-overlay" aria-label="Movie player" aria-hidden="true">
+        <div class="viewport-enclosure">
+            <button id="closeTheater" class="modal-close-btn" type="button" aria-label="Close player">x</button>
+            <div id="streamFrame" class="iframe-stream-terminal"></div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/movies.js"></script>
+</body>
+</html>

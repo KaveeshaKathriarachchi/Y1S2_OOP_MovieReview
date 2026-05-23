@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | CineRent</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="index.html">CineRent Admin</a>
+        <nav class="nav-actions">
+            <a class="ghost-button" href="movies.html">Movies</a>
+        </nav>
+    </header>
+    <main class="form-page wide">
+        <section class="form-panel">
+            <h1>Manage Movies</h1>
+            <form id="movieAdminForm">
+                <label>Admin User ID<input name="adminUserId" required></label>
+                <label>IMDB ID<input name="imdbId" required></label>
+                <label>Title<input name="title" required></label>
+                <label>Release Date<input name="releaseDate" type="date"></label>
+                <label>Trailer Link<input name="trailerLink"></label>
+                <label>Movie Link<input name="movieLink"></label>
+                <label>Poster URL<input name="poster"></label>
+                <label>Banner URL<input name="banner"></label>
+                <label>Rating<input name="rating" type="number" min="1" max="10" step="0.1"></label>
+                <label>Genres comma separated<input name="genres"></label>
+                <button class="primary-button full" type="submit">Add Movie</button>
+            </form>
+            <div class="button-row">
+                <button id="updateMovieButton" class="secondary-button" type="button">Update Movie</button>
+                <button id="deleteMovieButton" class="danger-button" type="button">Delete Movie</button>
+            </div>
+            <p id="adminMessage" class="message"></p>
+        </section>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

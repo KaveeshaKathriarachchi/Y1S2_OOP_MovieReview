@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment | CineRent</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="index.html">CineRent</a>
+    </header>
+
+    <main class="form-page">
+        <section class="form-panel">
+            <h1>Paid membership</h1>
+            <p class="muted">Complete payment to unlock full movies and review writing.</p>
+            <form id="paymentForm">
+                <label>User ID<input name="userId" required></label>
+                <label>Amount<input name="amount" type="number" value="9.99" step="0.01"></label>
+                <label>Method
+                    <select name="method">
+                        <option>CARD</option>
+                        <option>PAYPAL</option>
+                        <option>BANK_TRANSFER</option>
+                    </select>
+                </label>
+                <button class="primary-button full" name="success" value="true" type="submit">Payment Success</button>
+                <button class="danger-button full" name="success" value="false" type="submit">Payment Failed / Cancel</button>
+            </form>
+            <p id="paymentMessage" class="message"></p>
+        </section>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/payment.js"></script>
+</body>
+</html>
