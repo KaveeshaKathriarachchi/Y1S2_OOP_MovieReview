@@ -42,25 +42,13 @@ docs/
   - Admin login: `admin` / `admin123`
   - Sample movies and contributors for first-run testing.
 
-## Run Backend
-
-```powershell
-cd backend
-mvn spring-boot:run
-```
-
-The API runs at `http://localhost:8080/api`.
-
-## Open Frontend
-
-Open `frontend/index.html` in the browser. The frontend calls `http://localhost:8080/api`.
 
 ## MySQL Database
 
 The backend uses:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/realistic_user?createDatabaseIfNotExist=true
+spring.datasource.url=jdbc:mysql://localhost:3306/realistic_user
 spring.datasource.username=root
 spring.datasource.password=0112413740Kavee
 spring.jpa.hibernate.ddl-auto=update
