@@ -2,29 +2,7 @@
 
 This workspace contains a synchronized movie rental platform with a Spring Boot backend and a plain HTML/CSS/JS frontend.
 
-## Structure
 
-```text
-backend/
-  src/main/java/com/movieplatform/api/
-    config/        CORS, password encoder, sample data
-    controller/    REST API controllers
-    dto/           Request and response objects
-    model/         JPA database entities
-    repository/    Spring Data repositories
-    service/       Business rules
-  src/main/resources/application.properties
-frontend/
-  index.html       Landing page with login, sign-up, contributors, and linked movie banners
-  signup.html      User registration with paid-customer option
-  login.html       Shared user/admin login
-  payment.html     Payment success/failure flow
-  movies.html      Profile, movie access, trailers, reviews, paid movie loading
-  contributors.html
-  admin.html       Add/update/delete movies
-docs/
-  SPRING_BOOT_MOVIE_API_MAPPING_REPORT.md
-```
 
 ## Main Updates Added Beyond the Supplied Segments
 
@@ -50,7 +28,7 @@ The backend uses:
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/realistic_user
 spring.datasource.username=root
-spring.datasource.password=0112413740Kavee
+spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
 ```
 
