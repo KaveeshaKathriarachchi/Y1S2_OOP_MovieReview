@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Section - Record New Payment</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Shared Navigation Header (Payment Section style - blended into background) -->
+    <nav class="navbar">
+        <a th:href="@{/payments/dashboard}" class="nav-brand">
+            <span class="brand-title">Payment Section</span>
+        </a>
+        <ul class="nav-links">
+            <li><a th:href="@{/payments/dashboard}">Dashboard</a></li>
+            <li class="active"><a th:href="@{/payments/new}">Record Payment</a></li>
+            <li><a th:href="@{/payments/list}">Transaction Ledger</a></li>
+        </ul>
+        <div class="nav-right">
+            <a th:href="@{/payments/dashboard}" class="btn-signout">Sign Out</a>
+            <div class="avatar-profile">u</div>
+        </div>
+    </nav>
+
+    <!-- Page Content Container (Charcoal rounded card) -->
+    <div class="page-container">
+        
+        <!-- Section Title (Cinematic IMDb Yellow) -->
+        <div class="section-header">
+            <h2>🎬 Record Payment</h2>
+            <p>Log a new cinema rental or purchase transaction directly into payments.txt</p>
+        </div>
+
+        <!-- Pill Navigation Control Bar (Matching the screenshot control bar) -->
+        <div class="control-bar">
+            <div class="control-bar-left">
+                <a th:href="@{/payments/dashboard}" class="btn-pill">&larr; Dashboard</a>
+                <a th:href="@{/payments/new}" class="btn-pill active">Record Payment &rarr;</a>
+                <a th:href="@{/payments/list}" class="btn-pill">Transaction Ledger</a>
+                <a th:href="@{/payments/dashboard}" class="btn-pill">Logout</a>
+            </div>
+        </div>
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            <h2 class="form-title">Log Transaction</h2>
+            
+            <!-- Alerts inside form container for contextual visibility -->
+            <div class="alerts-container" th:if="${errorMessage}">
+                <div class="alert alert-danger" role="alert">
+                    <span th:text="${errorMessage}">Error message placeholder</span>
+                </div>
+            </div>
+
+            <form id="paymentForm" th:action="@{/payments/create}" th:object="${newPayment}" method="post">
+                
+                <div class="form-group">
+                    <label for="userIdInput">User ID</label>
+                    <input type="text" id="userIdInput" th:field="*{userId}" placeholder="Enter customer identifier (e.g. user_102)" required autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label for="movieNameInput">Name of the Movie</label>
+                    <input type="text" id="movieNameInput" th:field="*{movieName}" placeholder="Enter movie title (e.g. Avatar)" required autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label for="purchaseTypeSelect">Purchase Option</label>
+                    <select id="purchaseTypeSelect" th:field="*{purchaseType}" onchange="toggleRentalDays()" required>
+                        <option value="Full Own">Full Buyout (Own Forever) - $9.99</option>
+                        <option value="Rental">Movie Rental (Temporary) - $1.99 / day</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="rentalDaysGroup" style="display: none;">
+                    <label for="rentalDaysInput">Rental Duration (Days)</label>
+                    <input type="number" id="rentalDaysInput" th:field="*{rentalDays}" min="1" step="1" oninput="calculateTotal()" required />
+                </div>
+
+                <!-- Real-time Cost Breakdown Widget -->
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <div style="background-color: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Estimated Total Cost</span>
+                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <span id="costBreakdown" style="font-size: 0.9rem; color: var(--text-muted);">Full Buyout Package</span>
+                            <span id="totalCostDisplay" style="font-size: 1.8rem; font-weight: 900; color: var(--brand-gold);">$9.99</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button type="submit" id="submitPaymentBtn" class="btn btn-primary btn-block">Log Transaction</button>
+                    <a th:href="@{/payments/dashboard}" class="btn btn-secondary btn-block text-center">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer-info">
+            <p>&copy; 2026 Payment Section. All rights reserved. Secured local text file persistence mode active.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        function toggleRentalDays() {
+            var purchaseTypeSelect = document.getElementById('purchaseTypeSelect');
+            var rentalDaysGroup = document.getElementById('rentalDaysGroup');
+            var rentalDaysInput = document.getElementById('rentalDaysInput');
+            
+            if (purchaseTypeSelect.value === 'Rental') {
+                rentalDaysGroup.style.display = 'block';
+                if (!rentalDaysInput.value || rentalDaysInput.value < 1) {
+                    rentalDaysInput.value = 1;
+                }
+            } else {
+                rentalDaysGroup.style.display = 'none';
+                rentalDaysInput.value = 1;
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            var purchaseType = document.getElementById('purchaseTypeSelect').value;
+            var rentalDays = parseInt(document.getElementById('rentalDaysInput').value) || 1;
+            var breakdownSpan = document.getElementById('costBreakdown');
+            var totalSpan = document.getElementById('totalCostDisplay');
+
+            if (purchaseType === 'Rental') {
+                var total = (1.99 * rentalDays).toFixed(2);
+                breakdownSpan.textContent = '$1.99 × ' + rentalDays + (rentalDays === 1 ? ' day' : ' days');
+                totalSpan.textContent = '$' + total;
+            } else {
+                breakdownSpan.textContent = 'Full Buyout Package';
+                totalSpan.textContent = '$9.99';
+            }
+        }
+
+        // Initialize form layout and calculations on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            toggleRentalDays();
+        });
+    </script>
+
+</body>
+</html>
