@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Section - Operations Dashboard</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Shared Navigation Header (Payment Section style - blended into background) -->
+    <nav class="navbar">
+        <a th:href="@{/payments/dashboard}" class="nav-brand">
+            <span class="brand-title">Payment Section</span>
+        </a>
+        <ul class="nav-links">
+            <li class="active"><a th:href="@{/payments/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/payments/new}">Record Payment</a></li>
+            <li><a th:href="@{/payments/list}">Transaction Ledger</a></li>
+        </ul>
+        <div class="nav-right">
+            <a th:href="@{/payments/dashboard}" class="btn-signout">Sign Out</a>
+            <div class="avatar-profile">u</div>
+        </div>
+    </nav>
+
+    <!-- Page Content Container (Charcoal rounded card) -->
+    <div class="page-container">
+        
+        <!-- Section Title (Cinematic IMDb Yellow) -->
+        <div class="section-header">
+            <h2>🎬 Operations Overview</h2>
+            <p>Real-time transaction health metrics for Payment Section</p>
+        </div>
+
+        <!-- Pill Navigation Control Bar (Matching the screenshot control bar) -->
+        <div class="control-bar">
+            <div class="control-bar-left">
+                <a th:href="@{/payments/dashboard}" class="btn-pill active">&larr; Dashboard</a>
+                <a th:href="@{/payments/new}" class="btn-pill">Record Payment &rarr;</a>
+                <a th:href="@{/payments/list}" class="btn-pill">Transaction Ledger</a>
+                <a th:href="@{/payments/dashboard}" class="btn-pill">Logout</a>
+            </div>
+            
+            <div class="search-pill-container">
+                <input type="text" class="search-pill" id="dashboardSearch" placeholder="Search movie or ledger..." onkeyup="filterDashboard()" autocomplete="off" />
+                <svg class="search-icon-svg" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Alerts -->
+        <div class="alerts-container">
+            <div id="successAlert" class="alert alert-success" th:if="${successMessage}" role="alert">
+                <span th:text="${successMessage}">Success!</span>
+            </div>
+            <div id="errorAlert" class="alert alert-danger" th:if="${errorMessage}" role="alert">
+                <span th:text="${errorMessage}">Error occurred.</span>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <section class="metrics-grid">
+            <div class="metric-card" id="cardRevenue">
+                <span class="metric-label">Total Revenue</span>
+                <p class="metric-value" th:text="'$' + ${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 2, 'POINT')}">$0.00</p>
+                <span class="metric-sub">Accumulated from successful rentals</span>
+            </div>
+
+            <div class="metric-card" id="cardTotal">
+                <span class="metric-label">Transactions logged</span>
+                <p class="metric-value" th:text="${totalCount}">0</p>
+                <span class="metric-sub">Total transaction attempts</span>
+            </div>
+
+            <div class="metric-card" id="cardSuccess">
+                <span class="metric-label">Successful rentals</span>
+                <p class="metric-value font-bold" style="color: var(--success-green);" th:text="${successCount}">0</p>
+                <span class="metric-sub" th:text="${totalCount > 0} ? ${#numbers.formatDecimal(successCount * 100.0 / totalCount, 1, 1)} + '% success rate' : '0% success rate'">0%</span>
+            </div>
+
+            <div class="metric-card" id="cardFailed">
+                <span class="metric-label">Failed payments</span>
+                <p class="metric-value font-bold" style="color: var(--brand-red);" th:text="${failedCount}">0</p>
+                <span class="metric-sub" th:text="${totalCount > 0} ? ${#numbers.formatDecimal(failedCount * 100.0 / totalCount, 1, 1)} + '% failure rate' : '0% failure rate'">0%</span>
+            </div>
+        </section>
+
+        <!-- Progress Rate Bar -->
+        <section class="success-rate-container">
+            <div class="success-rate-header">
+                <span>Transaction Health Score (Success Rate)</span>
+                <span th:text="${totalCount > 0} ? ${#numbers.formatDecimal(successCount * 100.0 / totalCount, 1, 1)} + '%' : '0.0%'">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" th:style="'width: ' + (${totalCount > 0} ? ${successCount * 100.0 / totalCount} : 0) + '%'"></div>
+            </div>
+        </section>
+
+        <!-- Main Dashboard Actions split layout -->
+        <section class="dashboard-actions">
+            <div class="action-card">
+                <div>
+                    <h3>Manually Log Payment</h3>
+                    <p>Record a new cash or card payment request for rentals and purchases on the Payment Section platform.</p>
+                </div>
+                <a th:href="@{/payments/new}" class="btn btn-primary">Go to Form</a>
+            </div>
+
+            <div class="action-card">
+                <div>
+                    <h3>Audit Ledger Log</h3>
+                    <p>Access the complete real-time listing of transactions from payments.txt, search items, edit status, or clean up failures.</p>
+                </div>
+                <a th:href="@{/payments/list}" class="btn btn-secondary">Open Ledger</a>
+            </div>
+        </section>
+
+        <!-- Recent Activities Table -->
+        <section class="table-wrapper">
+            <div class="table-header-bar">
+                <h3 class="table-title">Recent Transactions</h3>
+                <span class="table-count">Last 5 Activities</span>
+            </div>
+            <table class="data-table" id="dashboardTable">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>User ID</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(recentPayments)}">
+                        <td colspan="5" class="text-center empty-table-state">
+                            <div class="empty-icon">📁</div>
+                            <p>No recent transactions recorded in database.</p>
+                        </td>
+                    </tr>
+                    <tr th:each="p : ${recentPayments}" class="transaction-row">
+                        <td class="font-mono text-muted transaction-id" th:text="${p.paymentId}" th:title="${p.paymentId}">ID</td>
+                        <td class="font-bold user-id" th:text="${p.userId}">User</td>
+                        <td class="font-mono font-bold amount-val" th:text="'$' + ${#numbers.formatDecimal(p.amount, 1, 2)}">$0.00</td>
+                        <td>
+                            <span th:class="'badge status-badge ' + (${p.status == 'Success'} ? 'badge-success' : 'badge-danger')" th:text="${p.status}">Status</span>
+                        </td>
+                        <td class="text-muted date-val" th:text="${p.date}">Date</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Cinema Movie Inventory Showcase (Matching Screenshot exactly) -->
+        <section class="movie-catalog-section">
+            <div class="movie-catalog-header">
+                <h3>🎬 Cinema Rental Catalog</h3>
+            </div>
+            <div class="movie-grid" id="movieCatalogGrid">
+                <!-- Movie 1: Black Panther -->
+                <div class="movie-card" data-title="black panther wakanda forever" data-year="2022">
+                    <div class="poster-wrapper">
+                        <img th:src="@{/images/black_panther.png}" alt="Black Panther: Wakanda" class="poster-img" />
+                    </div>
+                    <div class="movie-title">Black Panther: Wakanda</div>
+                    <div class="movie-year">2022</div>
+                </div>
+                <!-- Movie 2: Avatar -->
+                <div class="movie-card" data-title="avatar" data-year="2009">
+                    <div class="poster-wrapper">
+                        <img th:src="@{/images/avatar.png}" alt="Avatar" class="poster-img" />
+                    </div>
+                    <div class="movie-title">Avatar</div>
+                    <div class="movie-year">2009</div>
+                </div>
+                <!-- Movie 3: M3GAN -->
+                <div class="movie-card" data-title="m3gan" data-year="2022">
+                    <div class="poster-wrapper">
+                        <img th:src="@{/images/m3gan.png}" alt="M3GAN" class="poster-img" />
+                    </div>
+                    <div class="movie-title">M3GAN</div>
+                    <div class="movie-year">2022</div>
+                </div>
+                <!-- Movie 4: Strange World -->
+                <div class="movie-card" data-title="strange world" data-year="2021">
+                    <div class="poster-wrapper">
+                        <img th:src="@{/images/strange_world.png}" alt="Strange World" class="poster-img" />
+                    </div>
+                    <div class="movie-title">Strange World</div>
+                    <div class="movie-year">2021</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer-info">
+            <p>&copy; 2026 Payment Section. All rights reserved. Secured local text file persistence mode active.</p>
+        </footer>
+
+    </div>
+
+    <!-- Client-side Real-time Filter Script -->
+    <script>
+        function filterDashboard() {
+            var input = document.getElementById('dashboardSearch');
+            var filter = input.value.toLowerCase().trim();
+            
+            // 1. Filter Recent Transactions Table
+            var tableRows = document.querySelectorAll('#dashboardTable tbody .transaction-row');
+            tableRows.forEach(function(row) {
+                var txId = row.querySelector('.transaction-id').textContent.toLowerCase();
+                var userId = row.querySelector('.user-id').textContent.toLowerCase();
+                var status = row.querySelector('.status-badge').textContent.toLowerCase();
+                
+                if (txId.indexOf(filter) > -1 || userId.indexOf(filter) > -1 || status.indexOf(filter) > -1) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            // 2. Filter Movie Catalog Cards
+            var movieCards = document.querySelectorAll('#movieCatalogGrid .movie-card');
+            movieCards.forEach(function(card) {
+                var title = card.getAttribute('data-title');
+                var year = card.getAttribute('data-year');
+                
+                if (title.indexOf(filter) > -1 || year.indexOf(filter) > -1) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
