@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Section - Transaction Receipt</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* Ticket-specific styling for the on-screen card */
+        .ticket-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            background: linear-gradient(135deg, #161616 0%, #1c1c1c 100%);
+            border: 2px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        /* Movie Ticket Cutout decorations */
+        .ticket-container::before,
+        .ticket-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 24px;
+            height: 24px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            border: 2px solid #2a2a2a;
+            transform: translateY(-50%);
+            z-index: 5;
+        }
+        .ticket-container::before {
+            left: -14px;
+        }
+        .ticket-container::after {
+            right: -14px;
+        }
+
+        .ticket-header {
+            text-align: center;
+            border-bottom: 2px dashed #2a2a2a;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ticket-header h1 {
+            color: var(--brand-gold);
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .ticket-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .ticket-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .ticket-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .ticket-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .ticket-value {
+            color: var(--text-primary);
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .ticket-value.movie-name {
+            color: var(--brand-gold);
+            font-size: 1.1rem;
+        }
+
+        .ticket-value.success {
+            color: var(--success-green);
+        }
+
+        .ticket-value.failed {
+            color: var(--brand-red);
+        }
+
+        .ticket-divider {
+            border-top: 2px dashed #2a2a2a;
+            margin: 1.5rem 0;
+        }
+
+        .qr-section {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .qr-wrapper {
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .qr-wrapper img {
+            display: block;
+            width: 150px;
+            height: 150px;
+        }
+
+        .qr-text {
+            color: var(--brand-gold);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            max-width: 280px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        .actions-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Print friendly styles */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .navbar, .control-bar, .footer-info, .actions-row, .section-header {
+                display: none !important;
+            }
+            .page-container {
+                background: #ffffff !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 auto !important;
+                max-width: 100% !important;
+            }
+            .ticket-container {
+                background: #ffffff !important;
+                border: 2px dashed #000000 !important;
+                color: #000000 !important;
+                box-shadow: none !important;
+                margin: 2rem auto !important;
+                padding: 2rem !important;
+                width: 90% !important;
+                max-width: 450px !important;
+                border-radius: 0 !important;
+            }
+            .ticket-container::before,
+            .ticket-container::after {
+                display: none !important;
+            }
+            .ticket-header {
+                border-bottom: 2px dashed #000000 !important;
+            }
+            .ticket-header h1 {
+                color: #000000 !important;
+            }
+            .ticket-header p {
+                color: #555555 !important;
+            }
+            .ticket-label {
+                color: #444444 !important;
+            }
+            .ticket-value {
+                color: #000000 !important;
+            }
+            .ticket-value.movie-name {
+                color: #000000 !important;
+            }
+            .ticket-divider {
+                border-top: 2px dashed #000000 !important;
+            }
+            .qr-text {
+                color: #000000 !important;
+            }
+            .qr-wrapper {
+                box-shadow: none !important;
+                border: 1px solid #dddddd !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Shared Navigation Header -->
+    <nav class="navbar">
+        <a th:href="@{/payments/dashboard}" class="nav-brand">
+            <span class="brand-title">Payment Section</span>
+        </a>
+        <ul class="nav-links">
+            <li><a th:href="@{/payments/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/payments/new}">Record Payment</a></li>
+            <li><a th:href="@{/payments/list}">Transaction Ledger</a></li>
+        </ul>
+        <div class="nav-right">
+            <a th:href="@{/payments/dashboard}" class="btn-signout">Sign Out</a>
+            <div class="avatar-profile">u</div>
+        </div>
+    </nav>
+
+    <!-- Page Content Container -->
+    <div class="page-container">
+        
+        <!-- Section Title -->
+        <div class="section-header">
+            <h2>🎟️ Transaction Receipt</h2>
+            <p>Your payment has been successfully recorded. You may now print this receipt to claim your movie.</p>
+        </div>
+
+        <!-- Pill Navigation Control Bar -->
+        <div class="control-bar">
+            <div class="control-bar-left">
+                <a th:href="@{/payments/dashboard}" class="btn-pill">&larr; Dashboard</a>
+                <a th:href="@{/payments/list}" class="btn-pill">Transaction Ledger</a>
+                <a th:href="@{/payments/new}" class="btn-pill">Record Payment &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alerts-container" th:if="${successMessage}">
+            <div class="alert alert-success" role="alert">
+                <span th:text="${successMessage}">Logged!</span>
+            </div>
+        </div>
+
+        <!-- Cinema Ticket Card -->
+        <div class="ticket-container">
+            <div class="ticket-header">
+                <h1>Cinema Receipt</h1>
+                <p>Payment Section Ledger Entry</p>
+            </div>
+            
+            <div class="ticket-body">
+                <div class="ticket-row">
+                    <span class="ticket-label">Movie Title</span>
+                    <span class="ticket-value movie-name" th:text="${payment.movieName}">Avatar</span>
+                </div>
+                
+                <div class="ticket-row">
+                    <span class="ticket-label">User ID</span>
+                    <span class="ticket-value font-mono" th:text="${payment.userId}">user_101</span>
+                </div>
+
+                <div class="ticket-row" th:if="${payment.purchaseType != null}">
+                    <span class="ticket-label">Option Selected</span>
+                    <span class="ticket-value font-bold text-muted" th:text="${payment.purchaseType == 'Rental'} ? 'Rental (' + ${payment.rentalDays} + ' Days)' : 'Full Buyout (Own)'">Option</span>
+                </div>
+
+                <div class="ticket-row">
+                    <span class="ticket-label">Amount Paid</span>
+                    <span class="ticket-value font-mono" th:text="'$' + ${#numbers.formatDecimal(payment.amount, 1, 2)}">$19.99</span>
+                </div>
+
+                <div class="ticket-row">
+                    <span class="ticket-label">Payment Date</span>
+                    <span class="ticket-value font-mono" th:text="${payment.date}">2026-05-22</span>
+                </div>
+
+                <div class="ticket-row">
+                    <span class="ticket-label">Transaction ID</span>
+                    <span class="ticket-value font-mono" style="font-size: 0.75rem;" th:text="${payment.paymentId}">id-12345</span>
+                </div>
+            </div>
+
+            <div class="ticket-divider"></div>
+
+            <!-- QR Code Section -->
+            <div class="qr-section">
+                <div class="qr-wrapper">
+                    <!-- Dynamic QR Code API encoding the specific checkout text -->
+                    <img th:src="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Show this to cashier to rent your movie [Transaction ID: ' + ${payment.paymentId} + ']'" alt="QR Code Receipt" />
+                </div>
+                <p class="qr-text">🎬 Show this to cashier to rent your movie</p>
+            </div>
+        </div>
+
+        <!-- Receipt Action Buttons -->
+        <div class="actions-row">
+            <button onclick="window.print();" class="btn btn-primary">🖨️ Print Receipt</button>
+            <a th:href="@{/payments/list}" class="btn btn-secondary">Open Ledger</a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer-info">
+            <p>&copy; 2026 Payment Section. All rights reserved. Secured local text file persistence mode active.</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
