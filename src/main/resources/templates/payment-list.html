@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Section - Transaction Ledger</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Shared Navigation Header (Payment Section style - blended into background) -->
+    <nav class="navbar">
+        <a th:href="@{/payments/dashboard}" class="nav-brand">
+            <span class="brand-title">Payment Section</span>
+        </a>
+        <ul class="nav-links">
+            <li><a th:href="@{/payments/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/payments/new}">Record Payment</a></li>
+            <li class="active"><a th:href="@{/payments/list}">Transaction Ledger</a></li>
+        </ul>
+        <div class="nav-right">
+            <a th:href="@{/payments/dashboard}" class="btn-signout">Sign Out</a>
+            <div class="avatar-profile">u</div>
+        </div>
+    </nav>
+
+    <!-- Page Content Container (Charcoal rounded card) -->
+    <div class="page-container">
+        
+        <!-- Section Title (Cinematic IMDb Yellow) -->
+        <div class="section-header">
+            <h2>🎬 Transaction Ledger</h2>
+            <p>Full audit trail of transactions read and written to payments.txt</p>
+        </div>
+
+        <!-- Pill Navigation Control Bar (Matching the screenshot control bar) -->
+        <div class="control-bar">
+            <div class="control-bar-left">
+                <a th:href="@{/payments/dashboard}" class="btn-pill">&larr; Dashboard</a>
+                <a th:href="@{/payments/new}" class="btn-pill">Record Payment &rarr;</a>
+                <a th:href="@{/payments/list}" class="btn-pill active">Transaction Ledger</a>
+                <a th:href="@{/payments/dashboard}" class="btn-pill">Logout</a>
+            </div>
+            
+            <div class="search-pill-container">
+                <input type="text" class="search-pill" id="ledgerSearch" placeholder="Search movie, user or status..." onkeyup="filterLedger()" autocomplete="off" />
+                <svg class="search-icon-svg" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alerts-container">
+            <div id="successAlert" class="alert alert-success" th:if="${successMessage}" role="alert">
+                <span th:text="${successMessage}">Success!</span>
+            </div>
+            <div id="errorAlert" class="alert alert-danger" th:if="${errorMessage}" role="alert">
+                <span th:text="${errorMessage}">Error occurred.</span>
+            </div>
+        </div>
+
+        <!-- Full Ledger Table Wrapper -->
+        <section class="table-wrapper">
+            <div class="table-header-bar">
+                <h3 class="table-title">Database Records</h3>
+                <span class="table-count" th:text="${payments.size()} + ' Total Rows logged'">0 Total Rows logged</span>
+            </div>
+            <table class="data-table" id="paymentsLogTable">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>User ID</th>
+                        <th>Rented Movie</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(payments)}">
+                        <td colspan="7" class="text-center empty-table-state">
+                            <div class="empty-icon">📁</div>
+                            <p style="margin-bottom: 1rem;">No transactions exist in payments.txt database.</p>
+                            <a th:href="@{/payments/new}" class="btn btn-primary">Log First Payment</a>
+                        </td>
+                    </tr>
+                    <tr th:each="p : ${payments}" th:id="'payment-row-' + ${p.paymentId}" class="ledger-row">
+                        <!-- Transaction ID -->
+                        <td class="font-mono text-muted transaction-id" th:text="${p.paymentId}" th:title="${p.paymentId}">ID</td>
+                        
+                        <!-- User ID -->
+                        <td class="font-bold user-id" th:text="${p.userId}">User</td>
+                        
+                        <!-- Dynamic Rented Movie mapping based on User ID length -->
+                        <td class="rented-movie-cell">
+                            <!-- Custom Rented Movie if not Legacy -->
+                            <div th:if="${p.movieName != 'Legacy Rental'}" class="movie-td">
+                                <img th:with="mIdx=${p.movieName.length() % 4}" 
+                                     th:src="${mIdx == 0} ? @{/images/black_panther.png} : (${mIdx == 1} ? @{/images/avatar.png} : (${mIdx == 2} ? @{/images/m3gan.png} : @{/images/strange_world.png}))" 
+                                     class="movie-td-thumb" alt="Poster" />
+                                <div class="movie-td-info">
+                                    <span class="movie-td-title" th:text="${p.movieName}">Movie Title</span>
+                                    <span class="movie-td-year">Active Rental</span>
+                                </div>
+                            </div>
+                            <!-- Legacy Rented Movie (Dynamic modulo mapping) -->
+                            <div th:if="${p.movieName == 'Legacy Rental'}" th:with="mIdx=${p.userId.length() % 4}">
+                                <!-- Movie 0 -->
+                                <div th:if="${mIdx == 0}" class="movie-td">
+                                    <img th:src="@{/images/black_panther.png}" class="movie-td-thumb" alt="Poster" />
+                                    <div class="movie-td-info">
+                                        <span class="movie-td-title">Black Panther: Wakanda</span>
+                                        <span class="movie-td-year">2022</span>
+                                    </div>
+                                </div>
+                                <!-- Movie 1 -->
+                                <div th:if="${mIdx == 1}" class="movie-td">
+                                    <img th:src="@{/images/avatar.png}" class="movie-td-thumb" alt="Poster" />
+                                    <div class="movie-td-info">
+                                        <span class="movie-td-title">Avatar</span>
+                                        <span class="movie-td-year">2009</span>
+                                    </div>
+                                </div>
+                                <!-- Movie 2 -->
+                                <div th:if="${mIdx == 2}" class="movie-td">
+                                    <img th:src="@{/images/m3gan.png}" class="movie-td-thumb" alt="Poster" />
+                                    <div class="movie-td-info">
+                                        <span class="movie-td-title">M3GAN</span>
+                                        <span class="movie-td-year">2022</span>
+                                    </div>
+                                </div>
+                                <!-- Movie 3 -->
+                                <div th:if="${mIdx == 3}" class="movie-td">
+                                    <img th:src="@{/images/strange_world.png}" class="movie-td-thumb" alt="Poster" />
+                                    <div class="movie-td-info">
+                                        <span class="movie-td-title">Strange World</span>
+                                        <span class="movie-td-year">2021</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <!-- Amount -->
+                        <td class="font-mono amount-val">
+                            <span class="font-bold" th:text="'$' + ${#numbers.formatDecimal(p.amount, 1, 2)}">$0.00</span>
+                            <div style="font-size: 0.7rem; font-weight: 700; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);"
+                                 th:text="${p.purchaseType == 'Rental'} ? 'Rental (' + ${p.rentalDays} + 'd)' : 'Buyout'">
+                                Buyout
+                            </div>
+                        </td>
+                        
+                        <!-- Status badge -->
+                        <td>
+                            <span th:class="'badge status-badge ' + (${p.status == 'Success'} ? 'badge-success' : 'badge-danger')" th:text="${p.status}">Status</span>
+                        </td>
+                        
+                        <!-- Date -->
+                        <td class="text-muted date-val" th:text="${p.date}">Date</td>
+                        
+                        <!-- Action controls -->
+                        <td class="text-right actions-cell">
+                            <!-- Print/View Receipt button -->
+                            <a th:href="@{/payments/receipt/{id}(id=${p.paymentId})}" th:id="'btnReceipt-' + ${p.paymentId}" class="action-btn" style="text-decoration: none;" title="Print or view receipt ticket">
+                                View Receipt
+                            </a>
+
+                            <!-- Toggle Status Action -->
+                            <form th:action="@{/payments/toggle/{id}(id=${p.paymentId})}" method="post" style="display:inline;">
+                                <button type="submit" th:id="'btnToggle-' + ${p.paymentId}" class="action-btn" title="Toggle status success/failed">
+                                    Toggle Status
+                                </button>
+                            </form>
+
+                            <!-- Delete failed transactions -->
+                            <form th:action="@{/payments/delete/{id}(id=${p.paymentId})}" method="post" style="display:inline;" th:if="${p.status == 'Failed'}">
+                                <button type="submit" th:id="'btnDelete-' + ${p.paymentId}" class="action-btn action-btn-danger" title="Permanently delete failed log">
+                                    Delete
+                                </button>
+                            </form>
+                            
+                            <!-- Disabled delete for successful transactions -->
+                            <button th:if="${p.status == 'Success'}" class="action-btn action-btn-disabled" disabled title="Successful records cannot be deleted">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer-info">
+            <p>&copy; 2026 Payment Section. All rights reserved. Secured local text file persistence mode active.</p>
+        </footer>
+
+    </div>
+
+    <!-- Client-side Real-time Search Script -->
+    <script>
+        function filterLedger() {
+            var input = document.getElementById('ledgerSearch');
+            var filter = input.value.toLowerCase().trim();
+            var tableRows = document.querySelectorAll('#paymentsLogTable tbody .ledger-row');
+            
+            tableRows.forEach(function(row) {
+                var txId = row.querySelector('.transaction-id').textContent.toLowerCase();
+                var userId = row.querySelector('.user-id').textContent.toLowerCase();
+                var status = row.querySelector('.status-badge').textContent.toLowerCase();
+                var amount = row.querySelector('.amount-val').textContent.toLowerCase();
+                var date = row.querySelector('.date-val').textContent.toLowerCase();
+                
+                // Get movie title text if row has the movie cell
+                var movieCell = row.querySelector('.movie-td-title');
+                var movieTitle = movieCell ? movieCell.textContent.toLowerCase() : "";
+                
+                if (txId.indexOf(filter) > -1 || 
+                    userId.indexOf(filter) > -1 || 
+                    status.indexOf(filter) > -1 || 
+                    amount.indexOf(filter) > -1 ||
+                    date.indexOf(filter) > -1 ||
+                    movieTitle.indexOf(filter) > -1) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
